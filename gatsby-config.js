@@ -1,11 +1,11 @@
 module.exports = {
   siteMetadata: {
-    title: "Mohamed Oun's blog",
+    title: "Mohamed Oun's interweb page",
     author: 'Mohamed Oun',
     description: 'A blog about programming, web development, and nonsense.',
     siteUrl: 'https://mohamed3on.online'
   },
-  pathPrefix: '/gatsby-starter-blog',
+  pathPrefix: '/',
   plugins: [
     'gatsby-plugin-catch-links',
     {

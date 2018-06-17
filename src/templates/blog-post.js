@@ -1,16 +1,17 @@
-import React from 'react'
-import Helmet from 'react-helmet'
-import Link from 'gatsby-link'
-import get from 'lodash/get'
+import React from 'react';
+import Helmet from 'react-helmet';
+import Link from 'gatsby-link';
+import get from 'lodash/get';
 
-import Bio from '../components/Bio'
-import { rhythm, scale } from '../utils/typography'
+import Footer from '../components/Footer';
+import Bio from '../components/Bio';
+import { rhythm, scale } from '../utils/typography';
 
 class BlogPostTemplate extends React.Component {
   render() {
-    const post = this.props.data.markdownRemark
-    const siteTitle = get(this.props, 'data.site.siteMetadata.title')
-    const { previous, next } = this.props.pathContext
+    const post = this.props.data.markdownRemark;
+    const siteTitle = get(this.props, 'data.site.siteMetadata.title');
+    const { previous, next } = this.props.pathContext;
 
     return (
       <div>
@@ -21,7 +22,7 @@ class BlogPostTemplate extends React.Component {
             ...scale(-1 / 5),
             display: 'block',
             marginBottom: rhythm(1),
-            marginTop: rhythm(-1),
+            marginTop: rhythm(-1)
           }}
         >
           {post.frontmatter.date}
@@ -29,18 +30,17 @@ class BlogPostTemplate extends React.Component {
         <div dangerouslySetInnerHTML={{ __html: post.html }} />
         <hr
           style={{
-            marginBottom: rhythm(1),
+            marginBottom: rhythm(1)
           }}
         />
         <Bio />
-
         <ul
           style={{
             display: 'flex',
             flexWrap: 'wrap',
             justifyContent: 'space-between',
             listStyle: 'none',
-            padding: 0,
+            padding: 0
           }}
         >
           {previous && (
@@ -59,12 +59,13 @@ class BlogPostTemplate extends React.Component {
             </li>
           )}
         </ul>
+        <Footer />
       </div>
-    )
+    );
   }
 }
 
-export default BlogPostTemplate
+export default BlogPostTemplate;
 
 export const pageQuery = graphql`
   query BlogPostBySlug($slug: String!) {
@@ -83,4 +84,4 @@ export const pageQuery = graphql`
       }
     }
   }
-`
+`;

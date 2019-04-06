@@ -62,6 +62,7 @@ class Layout extends React.Component {
         <header>{header}</header>
         <main>{children}</main>
         <footer style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <a href="/about">About</a>
           <a href="https://twitter.com/mohamed3on">Twitter</a>
           <a href="https://www.linkedin.com/in/mohamed3on/">LinkedIn</a>
           <a href="https://www.GitHub.com/mohamed3on/">GitHub</a>

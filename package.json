@@ -35,10 +35,12 @@
   "license": "MIT",
   "scripts": {
     "build": "gatsby build",
-    "develop": "gatsby develop",
-    "start": "npm run develop",
+    "dev": "gatsby develop",
+    "start": "yarn dev",
     "serve": "gatsby serve",
-    "lint": "eslint . --fix"
+    "lint": "eslint . --fix",
+    "now-build": "yarn build",
+    "deploy": "now --target production"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.2",

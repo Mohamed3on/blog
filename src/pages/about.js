@@ -1,9 +1,9 @@
-import React from 'react';
-import { graphql } from 'gatsby';
-import Image from 'gatsby-image';
+import React from "react";
+import { graphql } from "gatsby";
+import Image from "gatsby-image";
 
-import Layout from '../components/layout';
-import SEO from '../components/seo';
+import Layout from "../components/layout";
+import SEO from "../components/seo";
 
 class AboutPage extends React.Component {
   render() {

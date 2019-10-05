@@ -1,7 +1,8 @@
-import React from "react";
-import { Link } from "gatsby";
+import React from 'react';
+import { Link } from 'gatsby';
+import styled from 'styled-components';
 
-import { rhythm, scale } from "../utils/typography";
+import { rhythm, scale } from '../utils/typography';
 
 class Layout extends React.Component {
   render() {
@@ -61,7 +62,7 @@ class Layout extends React.Component {
       >
         <header>{header}</header>
         <main>{children}</main>
-        <footer style={{ display: "flex", justifyContent: "space-between" }}>
+        <footer style={{ display: 'flex', justifyContent: 'space-between' }}>
           <a href="/about">About</a>
           <a href="https://twitter.com/mohamed3on">Twitter</a>
           <a href="https://www.linkedin.com/in/mohamed3on/">LinkedIn</a>

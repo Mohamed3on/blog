@@ -7,17 +7,28 @@ import InstagramIcon from './icons/InstagramIcon';
 import HoverableIcon from './icons/HoverableIcon';
 import GitHubIcon from './icons/GitHubIcon';
 
+import styled from 'styled-components';
+
+const LeftSide = styled.div`
+  display: flex;
+  flex-grow: 0.1;
+  justify-content: space-between;
+`;
+
+const RightSide = styled.div`
+  display: flex;
+  justify-content: space-between;
+  flex-basis: 30%;
+`;
+
 const Footer = () => {
   return (
     <footer style={{ display: 'flex', justifyContent: 'space-between' }}>
-      <Link to='/about'>About</Link>
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          flexBasis: '30%'
-        }}
-      >
+      <LeftSide>
+        <Link to='/about'>About</Link>
+        <Link to='/talks'>Talks</Link>
+      </LeftSide>
+      <RightSide>
         <HoverableIcon href='https://twitter.com/mohamed3on'>
           <TwitterIcon size='32'></TwitterIcon>
         </HoverableIcon>
@@ -30,7 +41,7 @@ const Footer = () => {
         <HoverableIcon href='https://instagram.com/mohamed3on'>
           <InstagramIcon size='32'></InstagramIcon>
         </HoverableIcon>
-      </div>
+      </RightSide>
     </footer>
   );
 };

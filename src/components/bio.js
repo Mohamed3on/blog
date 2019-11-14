@@ -13,7 +13,7 @@ function Bio() {
         return (
           <div
             style={{
-              display: `flex`
+              display: `flex`,
             }}
           >
             <Image
@@ -23,14 +23,14 @@ function Bio() {
                 marginRight: rhythm(1 / 2),
                 marginBottom: 0,
                 minWidth: 100,
-                borderRadius: `100%`
+                borderRadius: `100%`,
               }}
               imgStyle={{
-                borderRadius: `50%`
+                borderRadius: `50%`,
               }}
             />
             <p>
-              Written by <strong>{author}</strong>, a front-end engineer in
+              Written by <strong>{author}</strong>, a software engineer in
               Berlin.
               {` `}
               <a href={`https://twitter.com/${social.twitter}`}>

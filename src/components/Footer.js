@@ -1,13 +1,13 @@
-import React from 'react';
-import { Link } from 'gatsby';
-import TwitterIcon from './icons/TwitterIcon';
-import LinkedInIcon from './icons/LinkedInIcon';
-import InstagramIcon from './icons/InstagramIcon';
+import React from "react";
+import { Link } from "gatsby";
+import TwitterIcon from "./icons/TwitterIcon";
+import LinkedInIcon from "./icons/LinkedInIcon";
+import InstagramIcon from "./icons/InstagramIcon";
 
-import HoverableIcon from './icons/HoverableIcon';
-import GitHubIcon from './icons/GitHubIcon';
+import HoverableIcon from "./icons/HoverableIcon";
+import GitHubIcon from "./icons/GitHubIcon";
 
-import styled from 'styled-components';
+import styled from "styled-components";
 
 const LeftSide = styled.div`
   display: flex;
@@ -23,23 +23,35 @@ const RightSide = styled.div`
 
 const Footer = () => {
   return (
-    <footer style={{ display: 'flex', justifyContent: 'space-between' }}>
+    <footer style={{ display: "flex", justifyContent: "space-between" }}>
       <LeftSide>
-        <Link to='/about'>About</Link>
-        <Link to='/talks'>Talks</Link>
+        <Link to="/about">About</Link>
+        <Link to="/talks">Talks</Link>
       </LeftSide>
       <RightSide>
-        <HoverableIcon href='https://twitter.com/mohamed3on'>
-          <TwitterIcon size='32'></TwitterIcon>
+        <HoverableIcon
+          aria-label="my twitter"
+          href="https://twitter.com/mohamed3on"
+        >
+          <TwitterIcon size="32"></TwitterIcon>
         </HoverableIcon>
-        <HoverableIcon href='https://www.linkedin.com/in/mohamed3on'>
-          <LinkedInIcon size='32'></LinkedInIcon>
+        <HoverableIcon
+          aria-label="my LinkedIn"
+          href="https://www.linkedin.com/in/mohamed3on"
+        >
+          <LinkedInIcon size="32"></LinkedInIcon>
         </HoverableIcon>
-        <HoverableIcon href='https://www.GitHub.com/mohamed3on'>
-          <GitHubIcon size='32'></GitHubIcon>
+        <HoverableIcon
+          aria-label="my GitHub"
+          href="https://www.GitHub.com/mohamed3on"
+        >
+          <GitHubIcon size="32"></GitHubIcon>
         </HoverableIcon>
-        <HoverableIcon href='https://instagram.com/mohamed3on'>
-          <InstagramIcon size='32'></InstagramIcon>
+        <HoverableIcon
+          aria-label="my Instagram"
+          href="https://instagram.com/mohamed3on"
+        >
+          <InstagramIcon size="32"></InstagramIcon>
         </HoverableIcon>
       </RightSide>
     </footer>

@@ -1,11 +1,18 @@
-import React from "react";
-import { Link, graphql } from "gatsby";
+import React from 'react';
+import { Link, graphql } from 'gatsby';
 
-import Bio from "../components/bio";
-import Layout from "../components/layout";
-import SEO from "../components/seo";
-import { rhythm } from "../utils/typography";
+import Bio from '../components/bio';
+import Layout from '../components/layout';
+import SEO from '../components/seo';
+import { rhythm } from '../utils/typography';
+import styled from 'styled-components';
 
+const PostLink = styled(Link)`
+  box-shadow: none;
+  &:hover {
+    box-shadow: 0 1px 0 0 currentColor;
+  }
+`;
 class BlogIndex extends React.Component {
   render() {
     const { data } = this.props;
@@ -14,10 +21,7 @@ class BlogIndex extends React.Component {
 
     return (
       <Layout location={this.props.location} title={siteTitle}>
-        <SEO
-          title={siteTitle}
-          keywords={[`blog`, `gatsby`, `javascript`, `react`]}
-        />
+        <SEO title={siteTitle} keywords={[`blog`, `gatsby`, `javascript`, `react`]} />
         <Bio />
         {posts.map(({ node }) => {
           const title = node.frontmatter.title || node.fields.slug;
@@ -25,12 +29,10 @@ class BlogIndex extends React.Component {
             <div key={node.fields.slug}>
               <h3
                 style={{
-                  marginBottom: rhythm(1 / 4)
+                  marginBottom: rhythm(1 / 4),
                 }}
               >
-                <Link style={{ boxShadow: `none` }} to={node.fields.slug}>
-                  {title}
-                </Link>
+                <PostLink to={node.fields.slug}>{title}</PostLink>
               </h3>
               <small>{node.frontmatter.date}</small>
               <p dangerouslySetInnerHTML={{ __html: node.excerpt }} />

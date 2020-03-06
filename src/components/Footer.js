@@ -31,16 +31,16 @@ const Footer = () => {
       </LeftSide>
       <RightSide>
         <HoverableIcon aria-label='my twitter' href='https://twitter.com/mohamed3on'>
-          <TwitterIcon size='32'></TwitterIcon>
+          <TwitterIcon size='48'></TwitterIcon>
         </HoverableIcon>
         <HoverableIcon aria-label='my LinkedIn' href='https://www.linkedin.com/in/mohamed3on'>
-          <LinkedInIcon size='32'></LinkedInIcon>
+          <LinkedInIcon size='48'></LinkedInIcon>
         </HoverableIcon>
         <HoverableIcon aria-label='my GitHub' href='https://www.GitHub.com/mohamed3on'>
-          <GitHubIcon size='32'></GitHubIcon>
+          <GitHubIcon size='48'></GitHubIcon>
         </HoverableIcon>
         <HoverableIcon aria-label='my Instagram' href='https://instagram.com/mohamed3on'>
-          <InstagramIcon size='32'></InstagramIcon>
+          <InstagramIcon size='48'></InstagramIcon>
         </HoverableIcon>
       </RightSide>
     </footer>

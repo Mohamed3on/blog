@@ -13,6 +13,7 @@ const LeftSide = styled.div`
   display: flex;
   flex-grow: 0.1;
   justify-content: space-between;
+  align-items: center;
 `;
 
 const RightSide = styled.div`

@@ -15,11 +15,11 @@ const theme = {
     },
     {
       name: 'Merriweather',
-      styles: ['700', '900'],
+      styles: ['700', '900&display=swap'],
     },
   ],
   headerFontFamily: ['Merriweather', 'Georgia', 'serif'],
-  bodyFontFamily: ['Inter', 'Georgia', 'serif'],
+  bodyFontFamily: ['Inter', 'sans-serif'],
   headerWeight: 900,
   bodyWeight: 400,
   boldWeight: 700,

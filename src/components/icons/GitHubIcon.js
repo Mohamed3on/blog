@@ -2,12 +2,7 @@ import React from 'react';
 
 const GitHubIcon = ({ size }) => {
   return (
-    <svg
-      xmlns='http://www.w3.org/2000/svg'
-      width={size}
-      height={size}
-      viewBox='0 0 64 64'
-    >
+    <svg xmlns='http://www.w3.org/2000/svg' width={size} height={size} viewBox='0 0 64 64'>
       <linearGradient
         id='a'
         x1='30.999'
@@ -17,8 +12,8 @@ const GitHubIcon = ({ size }) => {
         gradientUnits='userSpaceOnUse'
         spreadMethod='reflect'
       >
-        <stop offset='0' stop-color='#6dc7ff' />
-        <stop offset='1' stop-color='#e6abff' />
+        <stop offset='0' stopColor='#6dc7ff' />
+        <stop offset='1' stopColor='#e6abff' />
       </linearGradient>
       <path
         fill='url(#a)'
@@ -33,8 +28,8 @@ const GitHubIcon = ({ size }) => {
         gradientUnits='userSpaceOnUse'
         spreadMethod='reflect'
       >
-        <stop offset='0' stop-color='#1a6dff' />
-        <stop offset='1' stop-color='#c822ff' />
+        <stop offset='0' stopColor='#1a6dff' />
+        <stop offset='1' stopColor='#c822ff' />
       </linearGradient>
       <path
         fill='url(#b)'

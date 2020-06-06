@@ -11,9 +11,12 @@ import styled from 'styled-components';
 
 const LeftSide = styled.div`
   display: flex;
-  flex-grow: 0.1;
   justify-content: space-between;
+  flex-grow: 1;
   align-items: center;
+  @media (min-width: 768px) {
+    flex-grow: 0.1;
+  }
 `;
 
 const RightSide = styled.div`

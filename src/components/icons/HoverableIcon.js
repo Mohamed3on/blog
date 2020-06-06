@@ -4,7 +4,7 @@ const HoverableIcon = styled.a`
   box-shadow: none;
   position: relative;
   top: 0;
-  transition: top ease 0.5s;
+  transition: top ease 0.2s;
   &:hover {
     top: -10px;
   }

@@ -4,6 +4,11 @@ date: '2017-09-04'
 description: Headless Chrome is a newly released feature in Google Chrome. Learn what it is and how you can use it!
 ---
 
+_Note: This post was also published on
+[dev.to](https://dev.to/mohamed3on/an-introduction-to-puppeteer-and-headless-chrome)_
+
+---
+
 [Headless Chrome](https://chromium.googlesource.com/chromium/src/+/lkgr/headless/README.md) is a newly released feature in Chrome 59 (Linux and Mac) and Chrome 60 (Windows). It allows for programmatically testing a website without launching a browser window, thus making automated tests far easier, which in turn gives you more confidence to change your app without breaking anything.
 ##First of all, what is 'headless'?
 Headless basically means 'without a GUI', which means in Chrome's case you'd be working with a programmable API, not with a GUI that you can interact with. A good example of Headless mode is when you're dealing with servers using SSH, and doing all the interactions using shell commands.

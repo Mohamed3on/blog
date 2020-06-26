@@ -4,6 +4,11 @@ description: In which I describe how passwords are stored in databases (hash+sal
 date: '2017-04-22'
 ---
 
+_Note: This post was also published on
+[dev.to](https://dev.to/mohamed3on/brief-introduction-to-salts-in-hashing)_
+
+---
+
 Have you ever wondered how your passwords are stored in the websites you use?
 
 Have you ever wondered why some websites tell you to set a new password, instead of sending you your forgotten password whenever you click ‘Forgot your password?’.

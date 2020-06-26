@@ -14,20 +14,31 @@ const LeftSide = styled.div`
   justify-content: space-between;
   flex-grow: 1;
   align-items: center;
+  margin-bottom: 15px;
   @media (min-width: 768px) {
-    flex-grow: 0.1;
+    flex-grow: 0.2;
+    margin-bottom: 0;
   }
 `;
 
 const RightSide = styled.div`
   display: flex;
   justify-content: space-between;
-  flex-basis: 30%;
+  flex-basis: 35%;
+`;
+
+const StyledFooter = styled.footer`
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  @media (min-width: 768px) {
+    flex-direction: row;
+  }
 `;
 
 const Footer = () => {
   return (
-    <footer style={{ display: 'flex', justifyContent: 'space-between' }}>
+    <StyledFooter>
       <LeftSide>
         <Link to='/'>Home</Link>
         <Link to='/about'>About</Link>
@@ -47,7 +58,7 @@ const Footer = () => {
           <InstagramIcon size='48'></InstagramIcon>
         </HoverableIcon>
       </RightSide>
-    </footer>
+    </StyledFooter>
   );
 };
 

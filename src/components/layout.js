@@ -4,6 +4,7 @@ import { Link } from 'gatsby';
 import { rhythm, scale } from '../utils/typography';
 import Footer from './Footer';
 import styled from 'styled-components';
+import { GlobalStyle } from './GlobalStyle';
 
 const HeaderLink = styled(Link)`
   box-shadow: none;
@@ -51,6 +52,7 @@ class Layout extends React.Component {
           padding: `${rhythm(1.5)} ${rhythm(3 / 4)}`,
         }}
       >
+        <GlobalStyle></GlobalStyle>
         <header>{header}</header>
         <main>{children}</main>
         <Footer></Footer>

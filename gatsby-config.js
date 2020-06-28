@@ -28,6 +28,7 @@ module.exports = {
       options: {
         plugins: [
           `gatsby-remark-embedder`,
+          `gatsby-remark-figure-caption`,
 
           {
             resolve: `gatsby-remark-images`,

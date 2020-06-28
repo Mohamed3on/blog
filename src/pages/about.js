@@ -1,9 +1,9 @@
-import React from "react";
-import { graphql } from "gatsby";
-import Image from "gatsby-image";
+import React from 'react';
+import { graphql } from 'gatsby';
+import Image from 'gatsby-image';
 
-import Layout from "../components/layout";
-import SEO from "../components/seo";
+import Layout from '../components/layout';
+import SEO from '../components/seo';
 
 class AboutPage extends React.Component {
   render() {
@@ -13,24 +13,20 @@ class AboutPage extends React.Component {
 
     return (
       <Layout location={this.props.location} title={siteTitle}>
-        <SEO title="About" />
+        <SEO title='About' />
         <Image fluid={data.avatar.childImageSharp.fluid} />
         <h3>Descriping yourself is hard</h3>
         <p>
-          I will try anyway. I'm just an average software engineer whose
-          interests range from software development, to football, to music, to
-          psychology, so basically everything.
+          I will try anyway. I'm a software engineer whose interests range from technology, to
+          football, to economics and psychology.
         </p>
         <p>
-          I made this blog to write my thoughts on random topics, but mostly
-          regarding code. I'm not sure I'll ever actually do that, but let's
-          see.
+          I created this blog to write my thoughts on various topics, but mostly regarding tech.
         </p>
+        <p>I'm currently based in Berlin, working as a front-end engineer at HelloFresh.</p>
         <p>
-          I'm currently based in Berlin, working as a front-end engineer at
-          HelloFresh.
+          For more info, Feel free to <a href='mailto:mohamed3on@gmail.com'>get in touch</a>!
         </p>
-        <p>For more info, I'm always up for a cup of coffee.</p>
       </Layout>
     );
   }

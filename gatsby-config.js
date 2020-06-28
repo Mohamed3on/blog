@@ -28,6 +28,7 @@ module.exports = {
       options: {
         plugins: [
           `gatsby-remark-embedder`,
+          `gatsby-remark-reading-time`,
 
           {
             resolve: `gatsby-remark-images`,

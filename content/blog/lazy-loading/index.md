@@ -1,5 +1,5 @@
 ---
-title: 'Image Lazy loading: how a single HTML attribute decreased page load times by 40%'
+title: 'Native image Lazy loading: how a single HTML attribute decreased page load times by 40%'
 date: '2020-07-15'
 ---
 
@@ -13,6 +13,10 @@ bandwidth and memory usage.
 Image lazy loading is a new browser feature that lets you skip
 downloading off-screen images until the user scrolls near them. All by
 adding a single attribute `loading="lazy"` to your `<img>` elements.
+
+```html
+<img src="image.png" loading="lazy" />
+```
 
 At HelloFresh, we offer our users a weekly selection of recipes to
 choose from. As we expand our
@@ -99,3 +103,7 @@ improving web performance.
 If your website loads multiple
 below-the-fold images, and you're looking for an easy performance gain, I would highly recommend taking a look at image
 lazy loading.
+
+_For more technical details about how native lazy loading works, I
+recommend checking
+out [this article](https://web.dev/native-lazy-loading/)._

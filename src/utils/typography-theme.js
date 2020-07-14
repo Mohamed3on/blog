@@ -43,6 +43,7 @@ const theme = {
     'blockquote cite:before': {
       content: '"— "',
     },
+    code: { padding: '.2em .4em', borderRadius: '6px', backgroundColor: 'rgba(27,31,35,.05)' },
     ul: {
       listStyle: 'disc',
     },

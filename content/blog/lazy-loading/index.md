@@ -1,5 +1,5 @@
 ---
-title: 'Lazy loading: how a single attribute decreased page load times by 40%'
+title: 'Image Lazy loading: how a single HTML attribute decreased page load times by 40%'
 date: '2020-07-15'
 ---
 

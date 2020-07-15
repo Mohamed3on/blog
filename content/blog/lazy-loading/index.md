@@ -1,5 +1,6 @@
 ---
-title: 'Native image lazy-loading: how a single HTML attribute decreased load times by 40%'
+title: 'Native image lazy-loading: how a single HTML attribute
+decreased initial load times by 40%'
 date: '2020-07-15'
 ---
 
@@ -33,13 +34,15 @@ the following:
 
 ## The numbers
 
+_Note: These numbers measure the initial page load, before any user interactions._
+
 ### Without lazy loading
 
 ![](./Before.png)
 
 - _30_ recipe image requests
 - for a total of _9MB_
-- taking _60 seconds_ to finish initial loading
+- taking _60 seconds_ to finish initial resource downloading
 
 ### With lazy loading
 
@@ -47,7 +50,7 @@ the following:
 
 - _12_ recipe image requests (**60% decrease**)
 - for a total of _4MB_ (**56% decrease**)
-- taking _36 seconds_ to finish initial loading (**40% decrease**)
+- taking _36 seconds_ to finish initial resource downloading (**40% decrease**)
 
 As you can see, the effect is quite significant, and gets more and
 more magnified the more images you add to your web page.

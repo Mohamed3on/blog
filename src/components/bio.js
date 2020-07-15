@@ -1,14 +1,14 @@
-import React from "react";
-import { StaticQuery, graphql } from "gatsby";
-import Image from "gatsby-image";
+import React from 'react';
+import { StaticQuery, graphql } from 'gatsby';
+import Image from 'gatsby-image';
 
-import { rhythm } from "../utils/typography";
+import { rhythm } from '../utils/typography';
 
 function Bio() {
   return (
     <StaticQuery
       query={bioQuery}
-      render={data => {
+      render={(data) => {
         const { author, social } = data.site.siteMetadata;
         return (
           <div
@@ -30,12 +30,9 @@ function Bio() {
               }}
             />
             <p>
-              Written by <strong>{author}</strong>, a software engineer in
-              Berlin.
+              Written by <strong>{author}</strong>, a software engineer in Berlin.
               {` `}
-              <a href={`https://twitter.com/${social.twitter}`}>
-                You can follow him on Twitter.
-              </a>
+              <a href={`https://twitter.com/${social.twitter}`}>You can follow him on Twitter.</a>
             </p>
           </div>
         );
@@ -48,7 +45,7 @@ const bioQuery = graphql`
   query BioQuery {
     avatar: file(absolutePath: { regex: "/profile-pic.jpg/" }) {
       childImageSharp {
-        fixed(width: 100, height: 100) {
+        fixed(width: 100, height: 100, quality: 100) {
           ...GatsbyImageSharpFixed
         }
       }

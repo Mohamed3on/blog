@@ -38,7 +38,7 @@ export const pageQuery = graphql`
   query {
     avatar: file(absolutePath: { regex: "/hf-pic.jpg/" }) {
       childImageSharp {
-        fluid(maxWidth: 500) {
+        fluid(maxWidth: 500, quality: 100) {
           ...GatsbyImageSharpFluid
         }
       }

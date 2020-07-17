@@ -1,5 +1,5 @@
 ---
-title: 'Native image lazy-loading: how a single HTML attribute
+title: 'Native <img> lazy-loading: how a single HTML attribute
 decreased initial load times by 40%'
 date: '2020-07-15'
 ---
@@ -105,7 +105,7 @@ improving web performance.
 
 If your website loads multiple
 below-the-fold images, and you're looking for an easy performance gain, I would highly recommend taking a look at image
-lazy loading.
+lazy loading. It's just one attribute, that's baked into the browser, backwards-compatible, and SEO-friendly.
 
 _For more technical details about how native lazy loading works, I
 recommend checking

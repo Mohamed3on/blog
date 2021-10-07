@@ -2,6 +2,7 @@
 title: An introduction to Puppeteer and Headless Chrome
 date: '2017-09-04'
 description: Headless Chrome is a newly released feature in Google Chrome. Learn what it is and how you can use it!
+published: true
 ---
 
 _Note: This post was also published on

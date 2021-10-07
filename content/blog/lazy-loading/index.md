@@ -2,6 +2,7 @@
 title: 'Native image lazy-loading: how a single HTML attribute
 decreased initial load times by 40%'
 date: '2020-07-15'
+published: true
 ---
 
 According to

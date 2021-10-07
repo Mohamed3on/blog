@@ -23,7 +23,10 @@ class AboutPage extends React.Component {
         <p>
           I created this blog to write my thoughts on various topics, but mostly regarding tech.
         </p>
-        <p>I'm currently based in Berlin, working as a front-end engineer at HelloFresh.</p>
+        <p>
+          I'm currently based in Berlin, working as a front-end engineer at{' '}
+          <a href='https://fast.co/'>Fast</a>.
+        </p>
         <p>
           For more info, Feel free to <a href='mailto:mohamed3on@gmail.com'>get in touch</a>!
         </p>

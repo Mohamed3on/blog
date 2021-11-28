@@ -49,6 +49,7 @@ const theme = {
     },
     'ul,ol': {
       marginLeft: 0,
+      listStylePosition: 'inside',
     },
     [MOBILE_MEDIA_QUERY]: {
       'ul,ol': {

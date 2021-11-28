@@ -1,6 +1,6 @@
 import React from 'react';
 import { graphql } from 'gatsby';
-import Image from 'gatsby-image';
+import { GatsbyImage } from 'gatsby-plugin-image';
 
 import Layout from '../components/layout';
 import SEO from '../components/seo';
@@ -14,7 +14,7 @@ class AboutPage extends React.Component {
     return (
       <Layout location={this.props.location} title={siteTitle}>
         <SEO title='About' />
-        <Image fluid={data.avatar.childImageSharp.fluid} />
+        <GatsbyImage image={data.avatar.childImageSharp.gatsbyImageData} />
         <h3>Descriping yourself is hard</h3>
         <p>
           I will try anyway. I'm a software engineer whose interests range from technology, to
@@ -38,12 +38,10 @@ class AboutPage extends React.Component {
 export default AboutPage;
 
 export const pageQuery = graphql`
-  query {
+  {
     avatar: file(absolutePath: { regex: "/hf-pic.jpg/" }) {
       childImageSharp {
-        fluid(maxWidth: 500, quality: 100) {
-          ...GatsbyImageSharpFluid
-        }
+        gatsbyImageData(quality: 100, layout: FULL_WIDTH)
       }
     }
     site {

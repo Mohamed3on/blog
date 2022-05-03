@@ -8,10 +8,7 @@ exports.createPages = ({ graphql, actions }) => {
   return graphql(
     `
       {
-        allMarkdownRemark(
-          sort: { fields: [frontmatter___date], order: DESC }
-          limit: 1000
-        ) {
+        allMarkdownRemark(sort: { fields: [frontmatter___date], order: DESC }, limit: 1000) {
           edges {
             node {
               fields {
@@ -19,23 +16,26 @@ exports.createPages = ({ graphql, actions }) => {
               }
               frontmatter {
                 title
+                published
               }
             }
           }
         }
       }
     `
-  ).then(result => {
+  ).then((result) => {
     if (result.errors) {
       throw result.errors;
     }
 
     // Create blog posts pages.
-    const posts = result.data.allMarkdownRemark.edges;
+    const posts = result.data.allMarkdownRemark.edges.filter(
+      (p) => p.node.frontmatter.published === true
+    );
 
     posts.forEach((post, index) => {
-      const previous =
-        index === posts.length - 1 ? null : posts[index + 1].node;
+      const previous = index === posts.length - 1 ? null : posts[index + 1].node;
+
       const next = index === 0 ? null : posts[index - 1].node;
 
       createPage({
@@ -44,8 +44,8 @@ exports.createPages = ({ graphql, actions }) => {
         context: {
           slug: post.node.fields.slug,
           previous,
-          next
-        }
+          next,
+        },
       });
     });
   });
@@ -59,7 +59,7 @@ exports.onCreateNode = ({ node, actions, getNode }) => {
     createNodeField({
       name: `slug`,
       node,
-      value
+      value,
     });
   }
 };

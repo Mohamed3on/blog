@@ -4,5 +4,10 @@ export const GlobalStyle = createGlobalStyle`
  figcaption {
   font-size: 12px;
   font-style: italic;
+
+}
+
+li {
+  list-style: disc;
 }
 `;

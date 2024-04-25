@@ -18,15 +18,12 @@ class AboutPage extends React.Component {
         <h3>Descriping yourself is hard</h3>
         <p>
           I will try anyway. I'm a software engineer whose interests range from technology, to
-          football, to economics and psychology.
+          football, to economics and psychology. Most importantly though, I love crowdsourcing.
         </p>
         <p>
           I created this blog to write my thoughts on various topics, but mostly regarding tech.
         </p>
-        <p>
-          I'm currently based in Berlin, working as a front-end engineer at{' '}
-          <a href='https://fast.co/'>Fast</a>.
-        </p>
+        <p>I'm currently based in Berlin.</p>
         <p>
           For more info, Feel free to <a href='mailto:mohamed3on@gmail.com'>get in touch</a>!
         </p>

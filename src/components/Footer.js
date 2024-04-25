@@ -43,6 +43,7 @@ const Footer = () => {
         <Link to='/'>Home</Link>
         <Link to='/about'>About</Link>
         <Link to='/talks'>Talks</Link>
+        <Link to='/projects'>Projects</Link>
       </LeftSide>
       <RightSide>
         <HoverableIcon aria-label='my twitter' href='https://twitter.com/mohamed3on'>

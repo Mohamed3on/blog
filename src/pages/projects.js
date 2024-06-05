@@ -36,6 +36,11 @@ class ProjectsPage extends React.Component {
             link='https://tribefinder.app'
             details='Discover where your Twitter friends live'
           ></Project>
+          <Project
+            title='Topcasts'
+            link='https://topcasts.app'
+            details='Discover the top podcast episodes'
+          ></Project>
         </List>
       </Layout>
     );

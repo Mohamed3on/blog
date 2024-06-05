@@ -1,6 +1,6 @@
 import React from 'react';
 import { StaticQuery, graphql } from 'gatsby';
-import { GatsbyImage } from "gatsby-plugin-image";
+import { GatsbyImage } from 'gatsby-plugin-image';
 
 import { rhythm } from '../utils/typography';
 
@@ -27,11 +27,13 @@ function Bio() {
               }}
               imgStyle={{
                 borderRadius: `50%`,
-              }} />
+              }}
+            />
             <p>
-              Written by <strong>{author}</strong>, a software engineer in Berlin.
-              {` `}
-              <a href={`https://twitter.com/${social.twitter}`}>You can follow him on Twitter.</a>
+              Written by <strong>{author}</strong>, maker of{' '}
+              <a href='https://topcasts.app'>Topcasts</a> and{' '}
+              <a href='https://tribefinder.app'>Tribe Finder</a>.<br></br>
+              You can follow him on <a href={`https://twitter.com/${social.twitter}`}> Twitter</a>.
             </p>
           </div>
         );
@@ -40,21 +42,22 @@ function Bio() {
   );
 }
 
-const bioQuery = graphql`query BioQuery {
-  avatar: file(absolutePath: {regex: "/profile.jpg/"}) {
-    childImageSharp {
-      gatsbyImageData(width: 100, height: 100, quality: 100, layout: FIXED)
+const bioQuery = graphql`
+  query BioQuery {
+    avatar: file(absolutePath: { regex: "/profile.jpg/" }) {
+      childImageSharp {
+        gatsbyImageData(width: 100, height: 100, quality: 100, layout: FIXED)
+      }
     }
-  }
-  site {
-    siteMetadata {
-      author
-      social {
-        twitter
+    site {
+      siteMetadata {
+        author
+        social {
+          twitter
+        }
       }
     }
   }
-}
 `;
 
 export default Bio;

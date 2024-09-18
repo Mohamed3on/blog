@@ -1,0 +1,50 @@
+---
+layout: ../../layouts/ProjectsLayout.astro
+title: "Projects"
+---
+
+import { Image } from "astro:assets";
+import tribeFinder from "./CleanShot 2024-09-17 at 11 .19.11@2x.png";
+import topcastsScreenshot1 from "./CleanShot 2024-09-17 at 11 .21.52@2x.png";
+import topcastsScreenshot2 from "./CleanShot 2024-09-17 at 11 .22.15@2x.png";
+
+### Tribe Finder
+
+<Image src={tribeFinder} alt="Tribe Finder screenshot" />
+
+Tribe Finder is a chrome extension that helps you find where people in your (Twitter) network live. To me, this helps answer the question: "Where should I live if I want to be surrounded by people I admire?".
+
+You can try it out on [Tribe Finder](https://tribefinder.app/) and read more about it [here](../posts/tribe-finder).
+
+### Topcasts
+
+<div className="flex flex-row gap-3">
+  <div className="w-1/2">
+    <Image
+      src={topcastsScreenshot1}
+      alt="Topcasts screenshot 1"
+      className="h-full w-full"
+    />
+  </div>
+  <div className="w-1/2">
+    <Image
+      src={topcastsScreenshot2}
+      alt="Topcasts screenshot 2"
+      className="h-full w-full"
+    />
+  </div>
+</div>
+
+Topcasts is a social podcast episode discovery platform. Great podcast episodes are still hard to find, so I built Topcasts to help you find them based on recommendations from others (and from Twitter). You can save your favorite episodes, share them with friends, and find out what your favorite podcasts are.
+
+You can try it out [here](https://topcasts.app/).
+
+### NutriData
+
+![alt text](<CleanShot 2024-09-17 at 11 .37.10@2x.png>)
+
+NutriData helps you shop healthier by showing you the nutritional content of the food you buy, including helpful ratios like protein per 100 calories, protein per €, and protein to carbs ratio.
+
+Currently, it only works on Rewe.de and Amazon DE/UK (Amazon does not always have the nutritional information available so it's not perfect there).
+
+You can try it out [here](https://getnutridata.com/).

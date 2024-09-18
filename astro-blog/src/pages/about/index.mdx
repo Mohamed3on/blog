@@ -1,0 +1,22 @@
+---
+layout: ../../layouts/AboutLayout.astro
+title: "About"
+---
+
+import { Image } from "astro:assets";
+import profileImage from "./image-1.png";
+
+<Image
+  src={profileImage}
+  alt="Mohamed's profile picture"
+  height={600}
+  className="aspect-auto rounded-md"
+/>
+
+I'm Mohamed, a software engineer from Egypt, currently based in Berlin.
+
+Currently, I'm a product engineer at Edge, beforehand I worked at Affirm, Fast, and HelloFresh.
+
+My interests are mainly around social apps & data, I live my life in pretty data-driven way (every movie I watch, every book I read, every city I visit, every restaurant I eat at is decided based on algorithms I made).
+
+You can read more about my (published) projects [here](/projects). _Hint: they're all about data._

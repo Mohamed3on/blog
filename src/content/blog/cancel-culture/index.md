@@ -151,8 +151,6 @@ _they_ got what's coming for them.
 
 ---
 
-![alt text](image.png)
-
 ## Cynicism
 
 We've become predators, waiting for the slightest opening to jump on

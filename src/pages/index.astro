@@ -12,6 +12,8 @@ import { SITE, SOCIALS } from "@config";
 import { Image } from "astro:assets";
 import profileImage from "../assets/images/profile.png";
 
+export const prerender = true;
+
 const posts = await getCollection("blog");
 
 const sortedPosts = getSortedPosts(posts);

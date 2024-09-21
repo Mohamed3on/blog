@@ -10,10 +10,15 @@ export interface Props {
   post: CollectionEntry<"blog">;
 }
 
-export async function getStaticPaths() {
-  const posts = await getCollection("blog", ({ data }) => !data.draft);
+export const prerender = true;
 
-  const postResult = posts.map(post => ({
+export async function getStaticPaths() {
+  const posts = await getCollection(
+    "blog",
+    ({ data }: CollectionEntry<"blog">) => !data.draft
+  );
+
+  const postResult = posts.map((post: CollectionEntry<"blog">) => ({
     params: { slug: post.slug },
     props: { post },
   }));

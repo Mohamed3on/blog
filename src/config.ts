@@ -52,7 +52,7 @@ export const SOCIALS: SocialObjects = [
   },
   {
     name: "Github",
-    href: "https://github.com/satnaing/astro-paper",
+    href: "https://github.com/mohamed3on",
     linkTitle: ` ${SITE.author} on Github`,
     active: true,
   },

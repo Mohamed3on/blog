@@ -1,0 +1,579 @@
+---
+title: "How to add Google OAuth to your Supabase Next.js App Router app"
+pubDatetime: 2025-03-28
+description: "A comprehensive guide to adding Supabase Google OAuth in Next.js (App Router) with dynamic origins, wildcards, and environment considerations."
+tags: ["supabase", "nextjs", "auth", "tech"]
+---
+
+import "remark-github-blockquote-alert/alert.css";
+
+Here's a practical guide on integrating Google OAuth with Supabase in a Next.js App Router project, handling dynamic redirect URLs correctly.
+
+### 1. Setting Up Supabase Auth with Google OAuth
+
+#### Step-by-Step
+
+1. **Create a Supabase Project**:
+
+   - Go to [Supabase](https://supabase.com/) and create your project.
+
+2. **Enable Google OAuth**:
+
+   - Navigate to `Authentication → Providers`.
+   - Enable Google and set your Google Client ID & Secret (you get these from the [Google Cloud Console](https://console.cloud.google.com)).
+
+3. **Configure Redirect URLs (Supabase)**:
+   - Go to `Authentication → URL Configuration` in your Supabase dashboard.
+   - Under **Redirect URLs**, add wildcard patterns (`/**`) for **all** origins your app will run from. This is crucial because your code uses the request's origin dynamically. Using wildcards is safer than specific callback paths.
+     - `http://localhost:<port>/**` (Commonly `http://localhost:3000/**`)
+     - `https://www.<your_production_domain_here>/**` (Include `www.` if your canonical URL uses it)
+     - `https://<your_production_domain_without_www>/**` (Include if your site is accessible without `www.`)
+     - `https://<your-project>-*.vercel.app/**` (For Vercel preview deployments)
+     - Add any other deployment preview or staging URLs here.
+   - Ensure your **Site URL** is set to your primary **production** URL (e.g., `https://www.<your_production_domain_here>`), paying attention to `www.` if applicable.
+
+### 1.5 Important: Google Cloud Console Configuration
+
+**Don't forget to configure Google Cloud!** Supabase only handles part of the redirect flow. You also _must_ tell Google which URLs are allowed to interact with its OAuth service.
+
+1.  Go to your project in the [Google Cloud Console](https://console.cloud.google.com/).
+2.  Navigate to `APIs & Services → Credentials`.
+3.  Select your OAuth 2.0 Client ID.
+4.  Under **Authorized JavaScript origins**, add all the base URLs your app runs from (no paths or wildcards here):
+    - `http://localhost:<port>` (e.g., `http://localhost:3000`)
+    - `https://www.<your_production_domain_here>`
+    - `https://<your_production_domain_without_www>` (if applicable)
+    - `https://<your-project>-<hash>.vercel.app` (Note: Google often doesn't support wildcards here, so you might need to add preview URLs manually or use a different strategy for previews).
+5.  Under **Authorized redirect URIs**, add the **exact callback URLs** corresponding to the origins above:
+    - `http://localhost:<port>/auth/callback`
+    - `https://www.<your_production_domain_here>/auth/callback`
+    - `https://<your_production_domain_without_www>/auth/callback` (if applicable)
+    - `https://<your-project>-<hash>.vercel.app/auth/callback` (Again, managing preview URLs here can be tricky).
+
+**Mismatch between Supabase settings and Google Cloud settings is a very common source of OAuth errors!** They must align.
+
+### 1.6 Important: Environment Variables
+
+Ensure your Supabase environment variables are correctly configured in **all** environments:
+
+- `NEXT_PUBLIC_SUPABASE_URL`: Your Supabase project URL.
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`: Your Supabase project anon key.
+
+Check:
+
+- Your local `.env.local` file (or equivalent).
+- Your hosting provider's settings (e.g., Vercel Environment Variables) for Production, Preview, and Development environments.
+
+Missing or incorrect variables will prevent the Supabase client from initializing correctly.
+
+### 2. Implementing Google OAuth Sign-In (Server Action)
+
+#### Server Action (`lib/supabase/actions.ts` or similar)
+
+This server action initiates the Google OAuth flow, dynamically setting the `redirectTo` URL based on the request's origin.
+
+```typescript
+"use server";
+
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server"; // Adjust path as needed
+
+export async function signInWithGoogleAction() {
+  const supabase = await createClient();
+  const requestHeaders = await headers();
+  const origin = requestHeaders.get("origin"); // e.g., 'http://localhost:3000' or 'https://your-site.com'
+
+  if (!origin) {
+    console.error("Missing origin header");
+    return redirect("/login?error=OriginMissing"); // Or your login page
+  }
+
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      // Dynamically set the callback URL based on the request origin
+      redirectTo: `${origin}/auth/callback`,
+    },
+  });
+
+  if (error) {
+    console.error("Error signing in with Google:", error);
+    return redirect(
+      `/login?error=OAuthSigninFailed&message=${encodeURIComponent(error.message)}`
+    );
+  }
+
+  if (data.url) {
+    // Redirect the browser to the Google auth page
+    return redirect(data.url);
+  } else {
+    console.error("signInWithOAuth did not return a URL");
+    return redirect("/login?error=OAuthConfigurationError");
+  }
+}
+```
+
+### 3. Handling the OAuth Callback Route
+
+Create a server-side route handler at `/app/auth/callback/route.ts` to exchange the code from Google for a Supabase session.
+
+```typescript
+// app/auth/callback/route.ts
+import { createClient } from "@/lib/supabase/server"; // Adjust path as needed
+import { NextResponse } from "next/server";
+
+export async function GET(request: Request) {
+  const { searchParams, origin } = new URL(request.url);
+  const code = searchParams.get("code");
+  // if `next` is in param, use it or default to '/'
+  const next = searchParams.get("next") ?? "/";
+
+  if (code) {
+    const supabase = await createClient();
+    const { error } = await supabase.auth.exchangeCodeForSession(code);
+
+    if (!error) {
+      // URL to redirect to after successful auth exchange, combining origin and next path
+      const redirectUrl = `${origin}${next}`;
+      return NextResponse.redirect(redirectUrl);
+    }
+  }
+
+  // return the user to an error page with instructions
+  console.error("Error exchanging code for session or missing code");
+  const redirectUrl = `${origin}/auth/auth-code-error`; // Create an error page at this route
+  return NextResponse.redirect(redirectUrl);
+}
+```
+
+### 4. Common Redirect Issues & Fixes
+
+Redirect problems usually happen because either:
+
+1.  The URL Supabase redirects back to (`${origin}/auth/callback`) isn't allowed in your **Supabase Redirect URLs** list.
+2.  The origin or redirect URI isn't allowed in your **Google Cloud Console Credentials** settings.
+
+**Solution (Check Both Supabase & Google Cloud):**
+
+1.  **Check Supabase Settings:**
+
+    - Go to `Authentication → URL Configuration`.
+    - **Confirm** your **Redirect URLs** list contains wildcard patterns (`/**`) covering **all** origins:
+
+      ```
+      # Development
+      http://localhost:3000/**
+
+      # Production (assuming www)
+      https://www.<your_production_domain_here>/**
+
+      # Production (if accessible without www)
+      https://<your_production_domain_without_www>/**
+
+      # Vercel Previews (example)
+      https://<your-project>-*.vercel.app/**
+
+      # Add others as needed...
+      ```
+
+    - **Confirm** the `Site URL` matches your canonical production URL (including `www.` if needed).
+
+2.  **Check Google Cloud Settings:**
+    - Go to `APIs & Services → Credentials → Your OAuth Client ID`.
+    - **Confirm** `Authorized JavaScript origins` includes all base domains (`http://localhost:3000`, `https://www.yoursite.com`, etc.).
+    - **Confirm** `Authorized redirect URIs` includes all specific callback URLs (`http://localhost:3000/auth/callback`, `https://www.yoursite.com/auth/callback`, etc.). **Remember potential issues with wildcards for preview URLs in Google Cloud!**
+
+### 5. Revalidation After Signing In/Out
+
+To ensure your UI updates correctly after authentication changes (like sign-in or sign-out), use Next.js's cache revalidation within your server actions.
+
+#### Sign Out Action (`lib/supabase/actions.ts` or similar)
+
+```typescript
+"use server";
+
+import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
+import { createClient } from "@/lib/supabase/server"; // Adjust path as needed
+
+export async function signOutAction() {
+  const supabase = await createClient();
+  const { error } = await supabase.auth.signOut();
+
+  if (error) {
+    console.error("Error signing out:", error);
+    // Redirect to login with an error message
+    return redirect(
+      `/login?error=SignOutFailed&message=${encodeURIComponent(error.message)}`
+    );
+  }
+
+  // Revalidate the root layout to ensure server components fetching user data are updated
+  revalidatePath("/", "layout");
+  // You might also want to redirect the user after sign-out
+  // redirect('/login');
+}
+```
+
+Revalidating (`revalidatePath('/', 'layout')`) tells Next.js to refresh data associated with the root layout, ensuring components that fetch user status reflect the change.
+
+### 6. Database Setup for User Profiles
+
+To store and access user profile data like names and avatars (which aren't part of the core `auth.users` table), you need to create a separate `public.profiles` table and set up a trigger to populate it automatically when a user signs up.
+
+Run the following SQL commands in your Supabase SQL Editor or include them in a database migration file.
+
+#### Step 1: Create the `profiles` Table
+
+This table stores public user profile information, linked to the `auth.users` table.
+
+```sql
+-- Create a table for public profiles
+create table profiles (
+  id uuid references auth.users on delete cascade not null primary key,
+  updated_at timestamp with time zone,
+  full_name text,
+  avatar_url text,
+  -- Add other profile fields as needed
+
+  constraint "profiles_id_fkey" foreign key ("id") references "auth"."users"("id") on delete cascade
+);
+
+-- Set up Row Level Security (RLS)
+-- See https://supabase.com/docs/guides/auth/row-level-security
+alter table profiles
+  enable row level security;
+
+-- Allow public read access for profiles
+create policy "Public profiles are viewable by everyone." on profiles
+  for select using (true);
+
+-- Allow individual user update access to their own profile
+create policy "Users can update own profile." on profiles
+  for update using (auth.uid() = id);
+```
+
+**Explanation:**
+
+- The `id` column links directly to `auth.users.id`.
+- RLS is enabled to control access.
+- Policies allow public reads and owner-only updates (adjust as needed).
+
+#### Step 2: Create a Trigger to Populate `profiles`
+
+This trigger automatically creates a profile entry when a new user is added to `auth.users`. It copies the user ID and attempts to extract the `full_name` and `avatar_url` from the metadata Supabase saves during the OAuth flow (`raw_user_meta_data`).
+
+```sql
+-- Function to handle new user creation
+create or replace function public.handle_new_user()
+returns trigger
+language plpgsql
+security definer set search_path = public
+as $$
+begin
+  insert into public.profiles (id, full_name, avatar_url)
+  values (
+    new.id,
+    new.raw_user_meta_data->>'full_name',
+    new.raw_user_meta_data->>'avatar_url'
+  );
+  return new;
+end;
+$$;
+
+-- Trigger to call the function after a new user is inserted
+create trigger on_auth_user_created
+  after insert on auth.users
+  for each row execute procedure public.handle_new_user();
+
+```
+
+**Explanation:**
+
+- The `handle_new_user` function performs the `insert` into `public.profiles`.
+- It uses data from the `new` row being inserted into `auth.users`.
+- The `on_auth_user_created` trigger executes this function automatically after user creation.
+
+With this database structure in place, you can now fetch and display this profile data in your application, as shown in the next step.
+
+### 7. Fetching User Data and Providing Context
+
+Now that the database is set up to store profiles, let's implement the React components to fetch the authenticated user (`user`) and their corresponding `profile` data on the server and provide it to client components via Context.
+
+> [!NOTE]
+> The following code examples assume you have generated TypeScript types from your Supabase schema using the Supabase CLI. If you haven't, run a command like this in your project root, adjusting the output path: `supabase gen types typescript --project-id <your-project-id> --schema public > lib/database.types.ts`
+
+This involves:
+
+1.  Creating a server component (`AuthServerWrapper`) to fetch the `user` and `profile`.
+2.  Creating a client component context provider (`AuthProvider`) to hold this data.
+3.  Using a hook (`useAuth`) in client components to access the data.
+
+#### Auth Server Wrapper (Server Component)
+
+This component runs on the server, fetches the essential auth and profile data, and passes it to the client-side provider.
+
+```typescript
+// app/auth-server-wrapper.tsx (or similar path)
+import { createClient } from '@/lib/supabase/server'; // Adjust path
+import { AuthProvider } from './auth-provider'; // Adjust path
+import type { Database } from '@/database.types'; // Adjust path
+
+// Define the Profile type based on your profiles table
+// You might have generated types using `supabase gen types typescript`
+type Profile = Database['public']['Tables']['profiles']['Row'];
+
+// This Server Component fetches initial auth state and profile
+export async function AuthServerWrapper({ children }: { children: React.ReactNode }) {
+  const supabase = await createClient();
+  const {
+    data: { user }, // Get the authenticated user
+  } = await supabase.auth.getUser();
+
+  let profile: Profile | null = null;
+  if (user) {
+    // If user is logged in, fetch their profile from the profiles table
+    // (Requires the profiles table and RLS setup from Step 6)
+    const { data: userProfile, error: profileError } = await supabase
+      .from('profiles')
+      .select('*') // Select all profile columns
+      .eq('id', user.id) // Filter by the user's ID
+      .single(); // Expect only one row
+
+    if (profileError) {
+      console.error(`Error fetching profile for user ${user.id}:`, profileError.message);
+      // Handle error appropriately, maybe log it, but don't block rendering
+    } else {
+      profile = userProfile;
+    }
+  }
+
+  return (
+    // Pass server-fetched user and profile to the client-side provider
+    <AuthProvider serverUser={user} serverProfile={profile}>
+      {children}
+    </AuthProvider>
+  );
+}
+```
+
+#### Auth Provider (Client Component)
+
+This client component creates the context and provides the data received from `AuthServerWrapper`.
+
+```typescript
+// app/auth-provider.tsx (or similar path)
+'use client';
+
+import React, { createContext, useContext } from 'react';
+import type { User } from '@supabase/supabase-js';
+import type { Database } from '@/database.types'; // Adjust path
+
+type Profile = Database['public']['Tables']['profiles']['Row'];
+
+interface AuthContextType {
+  user: User | null;
+  profile: Profile | null; // Include profile in the context type
+}
+
+const AuthContext = createContext<AuthContextType>({
+  user: null,
+  profile: null, // Default profile to null
+});
+
+export const useAuth = () => useContext(AuthContext);
+
+export function AuthProvider({
+  children,
+  serverUser = null,
+  serverProfile = null, // Accept server-fetched profile
+}: {
+  children: React.ReactNode;
+  serverUser?: User | null;
+  serverProfile?: Profile | null;
+}) {
+  // Provide both user and profile in the context value
+  const value = { user: serverUser, profile: serverProfile };
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+}
+```
+
+#### Wrap Layout
+
+Wrap your root layout with the `AuthServerWrapper`.
+
+```tsx
+// app/layout.tsx
+import { AuthServerWrapper } from "./auth-server-wrapper"; // Adjust path
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="en">
+      <body>
+        <AuthServerWrapper>
+          {/* The rest of your layout and children */}
+          {children}
+        </AuthServerWrapper>
+      </body>
+    </html>
+  );
+}
+```
+
+#### Usage in Client Components
+
+Now, any client component within the layout can use the `useAuth` hook:
+
+```typescript
+'use client';
+import { useAuth } from '@/app/auth-provider'; // Adjust path
+
+function UserDisplay() {
+  const { user, profile } = useAuth();
+
+  if (!user) {
+    return <div>Not logged in</div>;
+  }
+
+  return (
+    <div>
+      <p>Email: {user.email}</p>
+      {/* Display profile info, checking if profile exists */}
+      {profile ? (
+        <>
+          <p>Name: {profile.full_name ?? 'N/A'}</p>
+          {profile.avatar_url && (
+            <img src={profile.avatar_url} alt="User Avatar" width={50} />
+          )}
+        </>
+      ) : (
+        <p>Loading profile or profile not found...</p>
+      )}
+    </div>
+  );
+}
+```
+
+### 8. Middleware for Session Management
+
+To ensure that the Supabase session is fresh and available for server components and API routes, you need to use Next.js middleware to refresh the session cookie on relevant requests. The `@supabase/ssr` package provides utilities specifically for this.
+
+**Install the necessary package:**
+
+```bash
+npm install @supabase/ssr
+# or
+yarn add @supabase/ssr
+# or
+pnpm add @supabase/ssr
+```
+
+#### Create the Session Update Logic
+
+Create a helper function that handles session updates within the middleware context. This function uses `createServerClient` from `@supabase/ssr`, configured to read/write cookies from the middleware request/response objects.
+
+```typescript
+// lib/supabase/middleware.ts (or similar path)
+import { createServerClient, type CookieOptions } from "@supabase/ssr";
+import { NextResponse, type NextRequest } from "next/server";
+
+export async function updateSession(request: NextRequest) {
+  let response = NextResponse.next({
+    request: {
+      headers: request.headers,
+    },
+  });
+
+  // Create a Supabase client configured to use cookies defined in the request/response
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        // Define how to get cookies from the request
+        getAll() {
+          return request.cookies.getAll();
+        },
+        // Define how to set cookies on the response
+        setAll(
+          cookiesToSet: {
+            name: string;
+            value: string;
+            options: CookieOptions;
+          }[]
+        ) {
+          // NOTE: The `request.cookies.set` is added for compatibility with certain Edge functions.
+          // It might not be strictly necessary for all setups.
+          cookiesToSet.forEach(({ name, value, options }) => {
+            request.cookies.set(name, value); // Set on request (for potential subsequent operations)
+            response.cookies.set({ name, value, ...options }); // Set on response (to send back to browser)
+          });
+        },
+      },
+    }
+  );
+
+  // IMPORTANT: Avoid multiple await supabase.auth.getUser() calls in the same execution path.
+  // Refreshing the session involves network requests and setting cookies.
+  // Calling it multiple times can lead to race conditions and unexpected behavior.
+  // Calling it here ensures the session is updated for Server Components and subsequent Route Handlers.
+  await supabase.auth.getUser();
+
+  // Return the response object, which now includes updated Set-Cookie headers if the session changed.
+  return response;
+}
+```
+
+#### Create the Main Middleware File
+
+In your project root, create or update `middleware.ts`. This file imports the `updateSession` function and runs it for matched routes. You can chain other middleware logic here as well (like your `handleRedirects`).
+
+```typescript
+// middleware.ts (at the root of your project)
+import { type NextRequest, NextResponse } from "next/server";
+import { updateSession } from "./lib/supabase/middleware"; // Adjust path if needed
+
+export async function middleware(request: NextRequest) {
+  // First, update the session. This modifies the response cookies if needed.
+  const response = await updateSession(request);
+
+  // Add any other middleware logic here, potentially operating on the response
+  // For example: return handleRedirects(request, response);
+
+  // Return the response generated by updateSession (or subsequent middleware)
+  return response;
+}
+
+export const config = {
+  /*
+   * Match all request paths except for the ones starting with:
+   * - _next/static (static files)
+   * - _next/image (image optimization files)
+   * - favicon.ico (favicon file)
+   * Feel free to modify this pattern to include more exceptions.
+   */
+  matcher: [
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+  ],
+};
+```
+
+**Explanation:**
+
+1.  The `updateSession` function is called first.
+2.  It creates a Supabase client tied to the request/response cookies.
+3.  `supabase.auth.getUser()` checks the session and refreshes it if necessary, updating cookies on the `response` object.
+4.  The potentially modified `response` is returned.
+5.  The `config.matcher` determines which routes this middleware runs on. The example pattern is a common starting point, excluding static assets and images. **Adjust this matcher** to fit your application's needs. If you only need sessions on specific protected routes, make the matcher more specific for better performance.
+
+With this middleware in place, your server components and route handlers using `createClient()` (from `@/lib/supabase/server`) will always have access to the current user's authentication state.
+
+---
+
+Follow these steps carefully, paying close attention to **both Supabase and Google Cloud URL configurations** and **environment variables**. These are the most common failure points. Let me know if you hit any snags!

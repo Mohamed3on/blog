@@ -9,6 +9,7 @@ import { SITE } from "./src/config";
 import vercel from "@astrojs/vercel/serverless";
 
 import mdx from "@astrojs/mdx";
+import { remarkAlert } from "remark-github-blockquote-alert";
 
 // https://astro.build/config
 export default defineConfig({
@@ -28,6 +29,7 @@ export default defineConfig({
   markdown: {
     remarkPlugins: [
       remarkToc,
+      remarkAlert,
       [
         remarkCollapse,
         {

@@ -50,21 +50,19 @@ Here's a practical guide on integrating Google OAuth with Supabase in a Next.js 
     - `https://<your_production_domain_without_www>/auth/callback` (if applicable)
     - `https://<your-project>-<hash>.vercel.app/auth/callback` (Again, managing preview URLs here can be tricky).
 
-**Mismatch between Supabase settings and Google Cloud settings is a very common source of OAuth errors!** They must align.
+**Mismatch between Supabase settings and Google Cloud settings is a very common source of OAuth errors!**
 
 ### 1.6 Important: Environment Variables
 
 Ensure your Supabase environment variables are correctly configured in **all** environments:
 
-- `NEXT_PUBLIC_SUPABASE_URL`: Your Supabase project URL.
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY`: Your Supabase project anon key.
+- `NEXT_PUBLIC_SUPABASE_URL`: Your Supabase project URL (from Project Settings → API).
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`: Your Supabase project anon key (from Project Settings → API).
 
-Check:
+Check/Set them in:
 
-- Your local `.env.local` file (or equivalent).
+- Your local `.env.local` file.
 - Your hosting provider's settings (e.g., Vercel Environment Variables) for Production, Preview, and Development environments.
-
-Missing or incorrect variables will prevent the Supabase client from initializing correctly.
 
 ### 2. Implementing Google OAuth Sign-In (Server Action)
 
@@ -221,15 +219,12 @@ Revalidating (`revalidatePath('/', 'layout')`) tells Next.js to refresh data ass
 ### 6. Database Setup for User Profiles
 
 To store and access user profile data like names and avatars (which aren't part of the core `auth.users` table), you need to create a separate `public.profiles` table and set up a trigger to populate it automatically when a user signs up.
+(See the official Supabase documentation on [User Management](https://supabase.com/docs/guides/auth/managing-user-data) for more background.)
 
 Run the following SQL commands in your Supabase SQL Editor or include them in a database migration file.
 
-#### Step 1: Create the `profiles` Table
-
-This table stores public user profile information, linked to the `auth.users` table.
-
 ```sql
--- Create a table for public profiles
+-- 1. Create a table for public profiles
 create table profiles (
   id uuid references auth.users on delete cascade not null primary key,
   updated_at timestamp with time zone,
@@ -240,32 +235,22 @@ create table profiles (
   constraint "profiles_id_fkey" foreign key ("id") references "auth"."users"("id") on delete cascade
 );
 
--- Set up Row Level Security (RLS)
+-- 2. Set up Row Level Security (RLS)
 -- See https://supabase.com/docs/guides/auth/row-level-security
 alter table profiles
   enable row level security;
 
--- Allow public read access for profiles
+-- 3. Allow public read access for profiles
 create policy "Public profiles are viewable by everyone." on profiles
   for select using (true);
 
--- Allow individual user update access to their own profile
+-- 4. Allow individual user update access to their own profile
 create policy "Users can update own profile." on profiles
   for update using (auth.uid() = id);
-```
 
-**Explanation:**
-
-- The `id` column links directly to `auth.users.id`.
-- RLS is enabled to control access.
-- Policies allow public reads and owner-only updates (adjust as needed).
-
-#### Step 2: Create a Trigger to Populate `profiles`
-
-This trigger automatically creates a profile entry when a new user is added to `auth.users`. It copies the user ID and attempts to extract the `full_name` and `avatar_url` from the metadata Supabase saves during the OAuth flow (`raw_user_meta_data`).
-
-```sql
--- Function to handle new user creation
+-- 5. Function to handle new user creation
+-- This function runs when a user is added to auth.users and inserts
+-- a corresponding row into public.profiles, extracting name/avatar if available.
 create or replace function public.handle_new_user()
 returns trigger
 language plpgsql
@@ -282,18 +267,11 @@ begin
 end;
 $$;
 
--- Trigger to call the function after a new user is inserted
+-- 6. Trigger to call the function after a new user is inserted
 create trigger on_auth_user_created
   after insert on auth.users
   for each row execute procedure public.handle_new_user();
-
 ```
-
-**Explanation:**
-
-- The `handle_new_user` function performs the `insert` into `public.profiles`.
-- It uses data from the `new` row being inserted into `auth.users`.
-- The `on_auth_user_created` trigger executes this function automatically after user creation.
 
 With this database structure in place, you can now fetch and display this profile data in your application, as shown in the next step.
 
@@ -304,7 +282,7 @@ Now that the database is set up to store profiles, let's implement the React com
 > [!NOTE]
 > The following code examples assume you have generated TypeScript types from your Supabase schema using the Supabase CLI. If you haven't, run a command like this in your project root, adjusting the output path: `supabase gen types typescript --project-id <your-project-id> --schema public > lib/database.types.ts`
 
-This involves:
+The plan:
 
 1.  Creating a server component (`AuthServerWrapper`) to fetch the `user` and `profile`.
 2.  Creating a client component context provider (`AuthProvider`) to hold this data.
@@ -467,11 +445,8 @@ To ensure that the Supabase session is fresh and available for server components
 **Install the necessary package:**
 
 ```bash
-npm install @supabase/ssr
-# or
-yarn add @supabase/ssr
-# or
-pnpm add @supabase/ssr
+pnpm install @supabase/ssr
+# or bun add / npm add
 ```
 
 #### Create the Session Update Logic

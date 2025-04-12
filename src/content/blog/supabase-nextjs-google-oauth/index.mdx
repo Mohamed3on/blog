@@ -1,13 +1,37 @@
 ---
-title: "How to add Google OAuth to Next.js App Router with Supabase Auth"
+title: "How to add Google OAuth to Next.js with Supabase Auth"
 pubDatetime: 2025-04-03
 description: "A guide to adding Supabase Google auth in Next.js (App Router) including the common pitfalls and how to avoid them."
 tags: ["supabase", "nextjs", "auth", "tech"]
 ---
 
-import "remark-github-blockquote-alert/alert.css";
+### Why Use Supabase Auth?
 
-Here's a practical guide on integrating Google OAuth with Supabase in a Next.js App Router project, handling dynamic redirect URLs correctly.
+I've shied away from implementing auth in the past because it's often a pain to set up and integrate with your database, especially for small projects.
+
+However, Supabase Auth is pretty sweet because:
+
+- **It's Integrated:** It works seamlessly with the Supabase database (Postgres). User data lives right there, making it easier to manage profiles and permissions using Row Level Security (RLS). No need to juggle multiple services just for auth.
+- **It's Simple (Mostly):** While OAuth is never fun, Supabase provides fairly straightforward APIs and client libraries (`@supabase/ssr` for Next.js) to handle common flows like social logins (Google, GitHub, etc.), magic links, and passwords.
+- **Generous Free Tier & Better Scaling vs. Alternatives:** Offers a much higher free MAU limit and more cost-effective scaling compared to many competitors (see table below).
+
+#### Quick Pricing Comparison (Auth - _Check official sites for latest_)
+
+| Feature                           | Supabase (Free/Pro)             | Clerk (Free/Pro)                   | Firebase Auth (Free/Paid)          |
+| :-------------------------------- | :------------------------------ | :--------------------------------- | :--------------------------------- |
+| **Free Monthly Users**            | 50,000 MAU                      | 10,000 MAU                         | 50,000 MAU                         |
+| **Pro Plan Base Cost**            | ~$25/month (+ Compute)          | ~$0/month (Pay per MAU)            | ~$0/month (Pay per MAU)            |
+| **Pro Plan Included MAU**         | 100,000 MAU                     | 0 (Starts charging after 10k free) | 0 (Starts charging after 50k free) |
+| **Cost per MAU (Post-Inclusion)** | ~$0.00325/MAU                   | ~$0.02/MAU                         | ~$0.0055/MAU (for 50k-100k tier)   |
+| **Est. Cost @ 50k MAU**           | **~$0 / month**                 | ~$800 / month                      | **~$0 / month**                    |
+| **Est. Cost @ 100k MAU**          | **~$25 / month** (+ Compute)    | ~$1,800 / month                    | ~$275 / month                      |
+| **Est. Cost @ 1M MAU**            | **~$2,950 / month** (+ Compute) | ~$19,800 / month                   | ~$4,415 / month                    |
+
+**Takeaway:** As you can see, Supabase and Firebase are free up to 50k users. At 100k users, Supabase's Pro plan is significantly cheaper than both Clerk and Firebase. Once you hit large scale (like 1M users), Supabase remains the most cost-effective, often by a huge margin, although Firebase's tiered pricing becomes more competitive than Clerk's flat rate. Supabase's model provides predictable and generally lower costs as you grow. (_Supabase compute costs are extra but usually minor compared to MAU charges at scale_).
+
+Basically, it bundles user management, authentication, and authorization neatly within the Supabase ecosystem you might already be using for your database. Now, let's dive into adding Google OAuth specifically.
+
+import "remark-github-blockquote-alert/alert.css";
 
 ### 1. Setting Up Supabase Auth with Google OAuth
 

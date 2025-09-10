@@ -6,7 +6,7 @@ import remarkCollapse from "remark-collapse";
 import sitemap from "@astrojs/sitemap";
 import { SITE } from "./src/config";
 
-import vercel from "@astrojs/vercel/serverless";
+import vercel from "@astrojs/vercel";
 
 import mdx from "@astrojs/mdx";
 import { remarkAlert } from "remark-github-blockquote-alert";
@@ -49,7 +49,4 @@ export default defineConfig({
     },
   },
   scopedStyleStrategy: "where",
-  experimental: {
-    contentLayer: true,
-  },
 });

@@ -11,6 +11,7 @@ import getSortedPosts from "@utils/getSortedPosts";
 import { SITE, SOCIALS } from "@config";
 import { Image } from "astro:assets";
 import profileImage from "../assets/images/profile.png";
+import { slugifyStr } from "@utils/slugify";
 
 export const prerender = true;
 
@@ -92,9 +93,9 @@ const socialCount = SOCIALS.filter(social => social.active).length;
           <section id="featured" class="pb-6 pt-12">
             <h2 class="text-2xl font-semibold tracking-wide">Featured</h2>
             <ul>
-              {featuredPosts.map(({ data, slug }) => (
+              {featuredPosts.map(({ data }) => (
                 <Card
-                  href={`/${slug}/`}
+                  href={`/${slugifyStr(data.title)}/`}
                   frontmatter={data}
                   secHeading={false}
                 />
@@ -112,10 +113,10 @@ const socialCount = SOCIALS.filter(social => social.active).length;
           <h2 class="text-2xl font-semibold tracking-wide">Recent Posts</h2>
           <ul>
             {recentPosts.map(
-              ({ data, slug }, index) =>
+              ({ data }, index) =>
                 index < SITE.postPerIndex && (
                   <Card
-                    href={`/${slug}/`}
+                    href={`/${slugifyStr(data.title)}/`}
                     frontmatter={data}
                     secHeading={false}
                   />

@@ -1,4 +1,4 @@
-# Mohamed's tech blog
+# Mo's tech blog
 
 This is a tech blog built with Astro and hosted on Vercel.
 

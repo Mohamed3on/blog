@@ -1,0 +1,9 @@
+---
+import GlossaryTerm from "@components/GlossaryTerm";
+
+const { term, definition, children } = Astro.props;
+---
+
+<GlossaryTerm client:load term={term} definition={definition}>
+  {children}
+</GlossaryTerm>

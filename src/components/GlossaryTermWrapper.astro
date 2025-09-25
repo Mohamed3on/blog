@@ -1,0 +1,14 @@
+---
+import GlossaryTerm from './GlossaryTerm';
+
+export interface Props {
+  term: string;
+  definition: string;
+}
+
+const { term, definition } = Astro.props;
+---
+
+<GlossaryTerm client:load term={term} definition={definition}>
+  <slot />
+</GlossaryTerm>

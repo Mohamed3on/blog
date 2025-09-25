@@ -3,7 +3,9 @@
   "compilerOptions": {
     "baseUrl": "src",
     "jsx": "react-jsx",
+
     "paths": {
+      "@/*": ["./src/*"],
       "@assets/*": ["assets/*"],
       "@config": ["config.ts"],
       "@components/*": ["components/*"],

@@ -6,7 +6,7 @@ import remarkCollapse from "remark-collapse";
 import sitemap from "@astrojs/sitemap";
 import { SITE } from "./src/config";
 
-import vercel from "@astrojs/vercel";
+import cloudflare from "@astrojs/cloudflare";
 
 import mdx from "@astrojs/mdx";
 import { remarkAlert } from "remark-github-blockquote-alert";
@@ -15,9 +15,7 @@ import { remarkAlert } from "remark-github-blockquote-alert";
 export default defineConfig({
   site: SITE.website,
   output: "server",
-  adapter: vercel({
-    webAnalytics: { enabled: true },
-  }),
+  adapter: cloudflare(),
   integrations: [
     tailwind({
       applyBaseStyles: false,

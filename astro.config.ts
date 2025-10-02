@@ -41,13 +41,5 @@ export default defineConfig({
       wrap: true,
     },
   },
-  vite: {
-    optimizeDeps: {
-      exclude: ["@resvg/resvg-js"],
-    },
-    ssr: {
-      external: ["@resvg/resvg-js"],
-    },
-  },
   scopedStyleStrategy: "where",
 });

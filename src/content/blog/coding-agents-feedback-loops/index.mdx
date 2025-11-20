@@ -1,0 +1,136 @@
+
+---
+
+title: "AI Coding Agents and the Fast vs. Safe Trade-off"
+pubDatetime: 2025-11-20
+description: "Why feedback loops turn types, schemas, and tests from friction into speed in the era of coding agents."
+tags: ["agents", "feedback loops", "types", "schemas", "tests"]
+
+---
+
+For a long time, building software came with a supposedly hard rule:
+
+> You can move fast, or you can be safe. Pick one.
+
+If you were shipping a side project or iterating a startup, “fast” usually meant skipping structure: JavaScript instead of TypeScript, schemaless stores instead of Postgres, and few tests, if any. That was sane when schemas, types, and serious tests were expensive to design and maintain; you traded safety for speed.
+
+I am talking here about coding agents like Cursor, Codex, and Claude Code, that can read your repo, edit files, run commands, and iterate in the background.
+
+Those agents flip that economics. The same “safety” mechanisms that once slowed humans down now **make agents fast** by turning constraints into tight, machine-readable feedback loops. Without those loops, you spend your time stepping in to debug vague failures instead of moving on to the next change.
+
+You still don’t get to abdicate judgment. Agents will happily overfit to whatever passes the suite, including “helpfully” weakening or deleting tests, so code review remains the line between “fast and safe” and “fast and quietly wrong.”
+
+For a lot of everyday choices (TypeScript vs JavaScript, Postgres vs schemaless blobs, tests vs no tests), the old fast‑vs‑safe trade-off mostly collapses. Safety becomes speed.
+
+---
+
+## Agents and Feedback Loops
+
+LLMs are at their best when they can act, get feedback, and iterate. Coding is ideal because it naturally creates a loop like:
+
+> propose → run → inspect → fix
+
+* The agent writes code.
+* The code is compiled, type-checked, or tested.
+* The environment returns precise feedback: compiler errors, type mismatches, test failures, constraint violations.
+* The agent uses that feedback to self-correct.
+
+Types, schemas, and tests are not just safety nets; for an agent, they are **feedback channels**: relational schemas turn invalid data into crisp constraint errors, static types turn inconsistencies into localized compile-time failures, and tests turn behavioral regressions into precise, executable “this is wrong here” signals.
+
+The quality of the loop matters:
+
+* **Slow feedback** (20-minute test suites) throttles the loop.
+* **Flaky feedback** (brittle tests) makes the loop untrustworthy.
+* **Shallow feedback** (tests that don’t encode real behavior) gives the agent nothing meaningful to aim at.
+
+With strong schemas, types, and tests, the agent can **self-correct inside that loop**, often converging on correct code with minimal intervention. From your perspective, many tasks become “one-shot”: you ask, the agent internally iterates multiple times, and you see the final, working result. Safety doesn’t just prevent breakage; it reduces thrash.
+
+---
+
+## NoSQL vs SQL in an Agent World
+
+The classic “move fast” choice is a schemaless store (e.g., MongoDB) where you just start writing fields, versus a relational database (e.g., Postgres) where you define schemas, write migrations, and coordinate changes.
+
+Humans feel the friction of schemas; agents mostly don’t. For them, writing migrations, updating queries, and adapting to constraints is structured text work inside the same propose → run → inspect → fix loop.
+
+From your perspective, the time gap between “add a field to a JSON blob” and “add a column + migration + code updates” collapses, because the agent is doing nearly all of the mechanical work. The extra compute to run a few more iterations is cheap compared to engineering time.
+
+There are still important caveats: large, live migrations have irreducible operational risk and wall-clock time, and schemaless systems remain a great fit for append-only analytics and event streams. What makes less sense is using schemaless blobs as your primary application database purely “so we’re not slowed down by schema work” once an agent can absorb that overhead.
+
+---
+
+## Example: Adding a DB Field
+
+Say you want to add an `is_archived` flag to projects so you can hide archived items from the main list.
+
+In a schemaless world, the agent sprinkles `is_archived` into some code paths, leaves existing documents without the field, and forgets a few queries. Nothing fails loudly; you just discover later that some lists still show archived projects, some crash on `undefined`, and some filters behave inconsistently. The only real feedback loop is you noticing weird behavior.
+
+In a relational + typed + tested world, the same request flows through your constraints. The agent adds an `is_archived BOOLEAN NOT NULL DEFAULT FALSE` column and migration, updates the `Project` type, fixes the resulting type errors, and adjusts queries and tests so archived projects disappear from the main list but remain where appropriate (for example, an admin view). Each mistake shows up as a compiler error or failing test the agent can fix.
+
+The work you keep is specifying the behavior and making sure the rules (“archived projects never appear in the main list”) are encoded in schemas and tests. The agent optimizes for green tests; you make sure green actually means “good.”
+
+---
+
+## Your New Job: Spec, Tests, Architecture, Review
+
+Once agents can handle most of the mechanical work, your leverage shifts.
+
+You get the biggest win from:
+
+* **Designing good specs**
+
+  * Clear requirements, edge cases, constraints, and non-goals.
+  * What must never happen? What must always be true?
+* **Designing good tests**
+
+  * Encoding those rules as executable checks.
+  * Choosing the right granularity: unit, integration, contract/property tests.
+* **Choosing sound architectures**
+
+  * Where to put boundaries.
+  * How services talk to each other.
+  * Which constraints belong in schemas, types, or tests.
+* **Doing real code review**
+
+  * Checking that the agent didn’t weaken tests to make them pass.
+  * Guarding critical “golden” tests the agent must not alter.
+  * Catching cases where the implementation satisfies the tests but violates product sense.
+
+Agents are very good at **encoding** these rules and pushing changes through a codebase. They are not magically good at **inventing** the right ones or judging whether a change is product-appropriate. That remains human work, and it is where you stay in the loop.
+
+---
+
+## What Changes for a Solo Engineer
+
+As a solo dev or small team, you can now default to “big company” discipline without big company overhead. In practice, that means Postgres with real schemas and migrations for core domain data, TypeScript (or serious type checking) instead of untyped scripts, and a test suite you actually run.
+
+A realistic workflow:
+
+1. You describe the feature, the data model, and the behaviors and guarantees you care about.
+2. The agent designs or updates schemas and migrations, threads types through the code, and writes or updates tests until everything is green.
+3. You review for correctness, product fit, and architectural coherence, not every line of glue code.
+
+There is overhead here, but relative to the mechanical work the agent already absorbs and the debugging you avoid, it becomes negligible. You move fast **because** you’ve made safety cheap.
+
+---
+
+## Not Just Greenfield: Agents as Migration Engines
+
+Most real systems are not fresh TypeScript + Postgres monoliths; they’re JS + Mongo, Python + DynamoDB, and a mix of legacy and new services. Agents still help here, not by rewriting everything at once, but by **incrementally tightening feedback loops**: inferring and formalizing schemas from existing data, adding types at the edges and pushing them inward, wrapping critical flows in tests, and generating migrations to move data from schemaless blobs into structured tables.
+
+You still need staged rollouts, monitoring, and rollback plans. Agents just make tightening the system one bounded piece at a time much cheaper.
+
+---
+
+## What’s Left of the Trade-off
+
+The fast vs. safe trade-off doesn’t disappear; it just mostly vanishes at the level we used to talk about it. Where it still matters is exactly where your job concentrates now:
+
+* **Slow or flaky feedback loops** – 20-minute, brittle suites wreck agent performance and human patience, so you push toward fast, reliable tests and selective runs.
+* **Bad or shallow tests** – if tests don’t encode real business rules, “all green” doesn’t mean “correct,” and agents will happily optimize for a broken target.
+* **Vague specs** – “make this nicer” is not a spec; missing edge cases lead to technically correct but product-wrong implementations.
+* **Operational and access limits** – you (hopefully) don’t give agents full, unsupervised power over prod; you still need review, staging, approvals, and clear blast-radius boundaries.
+
+For a huge class of decisions (types vs no types, schemas vs amorphous blobs, tests vs manual poking), the old line “we’re small, we need to move fast, so we’ll skip safety” stops making sense. Agents thrive on constraints. Denying them those constraints slows you down twice: once now, and again later when you’re cleaning up.
+
+The new default is simple: build relational, typed, and tested systems; let the agent pay the mechanical cost; and spend your time on specs, behavior, architecture, and review. Fast and safe become the same direction.
